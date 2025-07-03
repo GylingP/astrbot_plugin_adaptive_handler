@@ -1,9 +1,5 @@
-# helloworld
+# Adaptive Handler
 
-AstrBot 插件模板
+基于 AstrBot 插件模板的更灵活消息处理插件
 
-A template plugin for AstrBot plugin feature
-
-# 支持
-
-[帮助文档](https://astrbot.app)
+自用 带有一些有趣的小功能

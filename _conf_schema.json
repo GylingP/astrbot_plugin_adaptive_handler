@@ -1,0 +1,33 @@
+{
+  "help_msg": {
+    "type": "string",
+    "description": "自定义 /help 指令的回复内容",
+    "default": "这是自定义的帮助内容。"
+  },
+  "reply_probability": {
+    "type": "float",
+    "description": "每条消息被概率性主动回复的概率（0~1之间的小数，例如0.1表示10%）",
+    "default": 0.1,
+    "minimum": 0,
+    "maximum": 1
+  },
+  "reply_list": {
+    "type": "list",
+    "description": "概率性主动回复时可选的回复内容（可填写多条，随机选取）",
+    "items": {
+      "type": "string",
+      "description": "回复内容"
+    },
+    "default": [
+      "你好！",
+      "在的~",
+      "需要帮助吗？"
+    ]
+  },
+  "max_feed_count":{
+    "type":"int",
+    "description": "猫咪喂奶的最大次数",
+    "default": 3,
+    "minimum": 0
+  }
+}
