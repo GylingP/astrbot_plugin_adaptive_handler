@@ -25,15 +25,8 @@ class AdaptiveHandler(Star):
             self.feed_counts = {}
             self._current_date = today
 
-    @filter.command("help", priority=10)
+    @filter.command("help", alias={'helps','帮助'},priority=10)
     async def help(self, event: AstrMessageEvent):
-        msg = self.config.get("help_msg", "欢迎使用本bot！更多内容请咨询管理员")
-        msg = msg.replace("\\n", "\n")
-        event.set_result(MessageEventResult().message(msg).use_t2i(False))
-        event.stop_event()
-
-    @filter.command("helps", priority=100)
-    async def helps(self, event: AstrMessageEvent):
         msg = self.config.get("help_msg", "欢迎使用本bot！更多内容请咨询管理员")
         msg = msg.replace("\\n", "\n")
         event.set_result(MessageEventResult().message(msg).use_t2i(False))
@@ -50,7 +43,7 @@ class AdaptiveHandler(Star):
     @filter.command("蝈曰")
     async def get_cs_image(self, event: AstrMessageEvent, keyword: str):
         config = self.context.get_config()
-        url = config.get("api_url", "https://172.17.0.1")
+        url = config.get("api_url", "https://www.gpcat.top/apis/cs")
         params = {}
         params["q"] = keyword
         try:
@@ -95,7 +88,7 @@ class AdaptiveHandler(Star):
             event.set_result(MessageEventResult().message(f"API请求异常: {e}"))
         event.stop_event()
     
-    @filter.command("喂奶")
+    @filter.command("喂奶",alias={'张嘴'})
     async def feed_cat(self, event: AstrMessageEvent):
         # 清理旧数据
         self._cleanup_old_data()
@@ -117,7 +110,7 @@ class AdaptiveHandler(Star):
             msg = "喵呜~猫咪已喂饱"
         else:
             # 未达到最大次数
-            msg = "感谢牛奶~"
+            msg = "喜欢~感谢牛奶~"
         
         event.set_result(MessageEventResult().message(msg).use_t2i(False))
         event.stop_event()
