@@ -51,7 +51,7 @@ class AdaptiveHandler(Star):
         event.stop_event()
 
     @filter.command("语录")
-    async def get_oracle(self, event: AstrMessageEvent, *args: str):
+    async def get_oracle(self, event: AstrMessageEvent, alias: str,keyword: str):
         if not args:
             event.set_result(MessageEventResult().message("请输入名字，例如：语录 蝈蝈 <关键词可选>"))
             event.stop_event()
