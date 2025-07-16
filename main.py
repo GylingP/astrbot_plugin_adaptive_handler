@@ -60,8 +60,7 @@ class AdaptiveHandler(Star):
         alias = args[0]
         keyword = args[1] if len(args) > 1 else None
 
-        config = filter.context.get_config()
-        base_url = config.get("api_url", "https://www.gpcat.top")
+        base_url = "https://www.gpcat.top"
 
         if keyword:
             url = f"{base_url}/apis/oracles/furry/{alias}/{keyword}"
@@ -96,8 +95,7 @@ class AdaptiveHandler(Star):
             return
 
         group_id = event.group_id
-        config = filter.context.get_config()
-        base_url = config.get("api_url", "https://www.gpcat.top")
+        base_url = "https://www.gpcat.top"
         url = f"{base_url}/apis/oracles/group/{group_id}"
 
         try:
