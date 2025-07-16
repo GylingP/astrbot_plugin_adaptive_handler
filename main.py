@@ -51,16 +51,12 @@ class AdaptiveHandler(Star):
         event.stop_event()
 
     @filter.command("语录")
-    async def get_oracle(self, event: AstrMessageEvent):
-        args = getattr(event, "args", None)
-        if not args or len(args) < 1:
+    async def get_oracle(self, event: AstrMessageEvent, alias: str, keyword: str = None):
+        if not alias:
             event.set_result(MessageEventResult().message("请输入名字，例如：语录 蝈蝈 <关键词可选>"))
             event.stop_event()
             return
-
-        alias = args[0]
-        keyword = args[1] if len(args) > 1 else None
-
+        
         base_url = "https://www.gpcat.top"
 
         if keyword:
@@ -90,7 +86,7 @@ class AdaptiveHandler(Star):
 
     @filter.command("随机语录")
     async def random_oracle(self, event: AstrMessageEvent):
-        if not getattr(event, "group_id", None):
+        if not event.group_id:
             event.set_result(MessageEventResult().message("“随机语录”仅支持在群聊中使用。"))
             event.stop_event()
             return
