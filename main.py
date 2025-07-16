@@ -86,12 +86,12 @@ class AdaptiveHandler(Star):
 
     @filter.command("随机语录")
     async def random_oracle(self, event: AstrMessageEvent):
-        if not event.group_id:
+        group_id = event.get_group_id()
+        
+        if not group_id:
             event.set_result(MessageEventResult().message("“随机语录”仅支持在群聊中使用。"))
             event.stop_event()
-            return
 
-        group_id = event.group_id
         base_url = "https://www.gpcat.top"
         url = f"{base_url}/apis/oracles/group/{group_id}"
 
