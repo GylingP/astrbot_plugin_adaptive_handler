@@ -25,7 +25,7 @@ class AdaptiveHandler(Star):
             self.feed_counts = {}
             self._current_date = today
 
-    @filter.command("help", alias={'helps','帮助'},priority=10)
+    @filter.command("help", alias={'_help','帮助'},priority=10) #别名用于与同一群聊内的其它bot区分
     async def help(self, event: AstrMessageEvent):
         msg = self.config.get("help_msg", "欢迎使用本bot！更多内容请咨询管理员")
         msg = msg.replace("\\n", "\n")
@@ -42,50 +42,81 @@ class AdaptiveHandler(Star):
 
     @filter.command("蝈曰")
     async def get_cs_image(self, event: AstrMessageEvent, keyword: str):
-        config = self.context.get_config()
-        url = config.get("api_url", "https://www.gpcat.top/apis/cs")
-        params = {}
-        params["q"] = keyword
-        try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                resp = await client.get(url, params=params)
-            if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image"):
-                # 保存图片到临时文件
-                tmp_path = os.path.join(os.path.dirname(__file__), "tmp_cs_img.jpg")
-                with open(tmp_path, "wb") as f:
-                    f.write(resp.content)
-                # 发送图片
-                event.set_result(MessageEventResult().file_image(tmp_path))
-                # 可选：发送后删除临时文件
-                # os.remove(tmp_path)
-            else:
-                event.set_result(MessageEventResult().message("未获取到图片，或API返回异常。"))
-        except Exception as e:
-            event.set_result(MessageEventResult().message(f"API请求异常: {e}"))
+        event.set_result(MessageEventResult().message("该指令已废弃，请使用 `语录 蝈蝈 <关键词>` 代替。"))
         event.stop_event()
 
     @filter.command("随机蝈曰")
     async def random_img(self, event: AstrMessageEvent):
-        # 随机蝈曰 -> 随机图片
-        config = self.context.get_config()
-        url = config.get("api_url", "https://www.gpcat.top/apis/cs")
-        rand_num = random.randint(1, 10)
-        tmp_path = os.path.join(os.path.dirname(__file__), f"{rand_num}.jpg")
+        event.set_result(MessageEventResult().message("该指令已废弃，请使用 `语录 蝈蝈` 代替。"))
+        event.stop_event()
+
+    @filter.command("语录")
+    async def get_oracle(event: AstrMessageEvent, *args: str):
+        if not args:
+            event.set_result(MessageEventResult().message("请输入名字，例如：语录 蝈蝈 <关键词可选>"))
+            event.stop_event()
+            return
+
+        alias = args[0]
+        keyword = args[1] if len(args) > 1 else None
+
+        config = filter.context.get_config()
+        base_url = config.get("api_url", "https://www.gpcat.top")
+
+        if keyword:
+            url = f"{base_url}/apis/oracles/furry/{alias}/{keyword}"
+        else:
+            url = f"{base_url}/apis/oracles/furry/{alias}"
+
         try:
             async with httpx.AsyncClient(timeout=10) as client:
-                headers = {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-                resp = await client.get(url, headers=headers)
+                resp = await client.get(url)
+
             if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image"):
+                tmp_path = os.path.join(os.path.dirname(__file__), f"oracle_{random.randint(1000,9999)}.jpg")
                 with open(tmp_path, "wb") as f:
                     f.write(resp.content)
                 event.set_result(MessageEventResult().file_image(tmp_path))
             else:
-                event.set_result(MessageEventResult().message("未获取到图片，或API返回异常。"))
+                msg = "未找到该语录或接口异常。"
+                if resp.status_code == 404:
+                    msg = "未找到对应的语录，请确认名字或关键词。"
+                event.set_result(MessageEventResult().message(msg))
         except Exception as e:
             event.set_result(MessageEventResult().message(f"API请求异常: {e}"))
+
+        event.stop_event()
+
+
+    @filter.command("随机语录")
+    async def random_oracle(event: AstrMessageEvent):
+        if not event.group_id:
+            event.set_result(MessageEventResult().message("“随机语录”仅支持在群聊中使用。"))
+            event.stop_event()
+            return
+
+        group_id = event.group_id
+        config = filter.context.get_config()
+        base_url = config.get("api_url", "https://www.gpcat.top")
+        url = f"{base_url}/apis/oracles/group/{group_id}"
+
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(url)
+
+            if resp.status_code == 200 and resp.headers.get("content-type", "").startswith("image"):
+                tmp_path = os.path.join(os.path.dirname(__file__), f"group_oracle_{random.randint(1000,9999)}.jpg")
+                with open(tmp_path, "wb") as f:
+                    f.write(resp.content)
+                event.set_result(MessageEventResult().file_image(tmp_path))
+            else:
+                msg = "未获取到群语录，或接口返回异常。"
+                if resp.status_code == 404:
+                    msg = "该群尚未关联任何语录用户。"
+                event.set_result(MessageEventResult().message(msg))
+        except Exception as e:
+            event.set_result(MessageEventResult().message(f"API请求异常: {e}"))
+
         event.stop_event()
     
     @filter.command("喂奶",alias={'张嘴'})
