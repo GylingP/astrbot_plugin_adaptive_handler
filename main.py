@@ -51,7 +51,7 @@ class AdaptiveHandler(Star):
         event.stop_event()
 
     @filter.command("语录")
-    async def get_oracle(event: AstrMessageEvent, *args: str):
+    async def get_oracle(self, event: AstrMessageEvent, *args: str):
         if not args:
             event.set_result(MessageEventResult().message("请输入名字，例如：语录 蝈蝈 <关键词可选>"))
             event.stop_event()
@@ -88,7 +88,7 @@ class AdaptiveHandler(Star):
 
 
     @filter.command("随机语录")
-    async def random_oracle(event: AstrMessageEvent):
+    async def random_oracle(self, event: AstrMessageEvent):
         if not event.group_id:
             event.set_result(MessageEventResult().message("“随机语录”仅支持在群聊中使用。"))
             event.stop_event()
